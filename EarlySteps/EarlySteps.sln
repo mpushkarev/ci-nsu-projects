@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PascalsTriangle", "PascalsT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SumNumbersInString", "SumNumbersInString\SumNumbersInString.csproj", "{CF666197-85FD-46C2-8548-1C13481E951B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseConverter", "BaseConverter\BaseConverter.csproj", "{56601FC4-03B3-4415-B8FA-B8077849FC9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{CF666197-85FD-46C2-8548-1C13481E951B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF666197-85FD-46C2-8548-1C13481E951B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF666197-85FD-46C2-8548-1C13481E951B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56601FC4-03B3-4415-B8FA-B8077849FC9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56601FC4-03B3-4415-B8FA-B8077849FC9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56601FC4-03B3-4415-B8FA-B8077849FC9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56601FC4-03B3-4415-B8FA-B8077849FC9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
