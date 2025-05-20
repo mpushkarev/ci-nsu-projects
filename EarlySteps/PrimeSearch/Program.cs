@@ -1,7 +1,7 @@
 ﻿/******************************************************************************\
 *                                                                              *
 *  Author:     Mikhail Pushkarev (CI NSU)                                      *
-*  Created:    Approv. September - December 2023                               *
+*  Created:    Approx. September - December 2023                               *
 *                                                                              *
 *  Description:                                                                *
 *    Simple implementation to search for prime numbers.                        *
