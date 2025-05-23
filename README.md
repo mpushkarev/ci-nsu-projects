@@ -1,3 +1,4 @@
+lang: **en** | [ru](README.ru.md)
 # 🗂️ ci-nsu-projects
 Selected college tasks, labs, and solved problems (2023–now).
 From the Higher College of Informatics at NSU (Novosibirsk State University).
