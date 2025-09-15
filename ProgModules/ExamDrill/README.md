@@ -18,6 +18,29 @@
 dotnet add package Microsoft.EntityFrameworkCore.Sqlite
 ```
 
+Для базового примера возьмем абстрактную идею, где пользователю надо будет хранить примерно такие данные:
+
+**Items:**
+
+| Id | Name  | Category | Notes      | Tags              |
+|----|-------|----------|------------|-------------------|
+| 1  | aboba | abobus   | haha, ohoh | lol, kek, 4eburek |
+
+**Tags:**
+
+| Id | Name    |
+|----|---------|
+| 1  | lol     |
+| 2  | kek     |
+| 3  | 4eburek |
+
+**Notes:**
+
+| Id | Text  | Item         |
+|----|-------|--------------|
+| 1  | haha  | aboba (Id 1) |
+| 2  | ohoh  | aboba (Id 1) |
+
 ### 📝 Модели данных (классы)
 
 Создаем примерно такую структуру в проекте:
@@ -33,9 +56,8 @@ ExamDrillDemo/
 ├── Data/
 │   └── AppDbContext.cs
 ├── MainWindow.xaml
+├── MainWindow.xaml.cs
 ```
-
-Здесь представлен абстрактный пример, покрывающий основные варианты.
 
 В каждой модели примерно такое содержание:
 
@@ -121,30 +143,83 @@ public class ItemTag {
 2. Для решения проблем с инициализацией строки юзаем `= string.Empty`. Это сахар, заменяющий инициализацию строки в конструкторе.
 3. На этом этапе пока что только просто модели данных! Не заморачиваемся с авторизацией и ролями, это позже.
 
-<details>
-<summary>⁉️ А что в итоге будет?</summary>
+### 🗃️ База данных (Code First)
 
-Для пользователя в дальнейшем все будет примерно вот так:
+Теперь необходимо создать БД. Открываем `AppDbContext.cs` и приводим его к примерно следующему виду:
 
-**Items:**
+```csharp
+internal class AppDbContext : DbContext {
 
-| Id | Name  | Category | Notes      | Tags              |
-|----|-------|----------|------------|-------------------|
-| 1  | aboba | abobus   | haha, ohoh | lol, kek, 4eburek |
+    public DbSet<Item> Items { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Note> Notes { get; set; }
+    public DbSet<ItemTag> ItemTags { get; set; }
+    public DbSet<Tag> Tags { get; set; }
 
-**Tags:**
+    public AppDbContext() {
+        Database.EnsureCreated();
+    }
 
-| Id | Name    |
-|----|---------|
-| 1  | lol     |
-| 2  | kek     |
-| 3  | 4eburek |
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+        optionsBuilder.UseSqlite("Data Source=app.db");
+    }
 
-**Notes:**
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
 
-| Id | Text  | Item         |
-|----|-------|--------------|
-| 1  | haha  | aboba (Id 1) |
-| 2  | ohoh  | aboba (Id 1) |
+        modelBuilder.Entity<Item>()
+            .HasOne(i => i.Category)
+            .WithMany(c => c.Items)
+            .HasForeignKey(i => i.CategoryId);
 
-</details>
+        modelBuilder.Entity<Note>()
+            .HasOne(n => n.Item)
+            .WithMany(i => i.Notes)
+            .HasForeignKey(n => n.ItemId);
+
+        modelBuilder.Entity<ItemTag>()
+            .HasKey(it => it.Id);
+
+        modelBuilder.Entity<ItemTag>()
+            .HasOne(it => it.Item)
+            .WithMany(i => i.ItemTags)
+            .HasForeignKey(it => it.ItemId);
+
+        modelBuilder.Entity<ItemTag>()
+            .HasOne(it => it.Tag)
+            .WithMany(t => t.ItemTags)
+            .HasForeignKey(it => it.TagId);
+
+        modelBuilder.Entity<Category>().HasData(
+            new Category { Id = 1, Title = "abobus" }
+        );
+
+        modelBuilder.Entity<Tag>().HasData(
+            new Tag { Id = 1, Name = "lol" },
+            new Tag { Id = 2, Name = "kek" },
+            new Tag { Id = 3, Name = "4eburek" }
+        );
+
+        modelBuilder.Entity<Item>().HasData(
+            new Item { Id = 1, Name = "aboba", CategoryId = 1 }
+        );
+
+        modelBuilder.Entity<Note>().HasData(
+            new Note { Id = 1, Text = "haha", ItemId = 1 },
+            new Note { Id = 2, Text = "ohoh", ItemId = 1 }
+        );
+
+        modelBuilder.Entity<ItemTag>().HasData(
+            new ItemTag { Id = 1, ItemId = 1, TagId = 1 },
+            new ItemTag { Id = 2, ItemId = 1, TagId = 2 },
+            new ItemTag { Id = 3, ItemId = 1, TagId = 3 }
+        );
+    }
+}
+```
+
+Немного пояснений о содержимом:
+
+- `public DbSet<СУЩНОСТЬ> СУЩНОСТИ { get; set; }` - создает таблицу в БД для каждой сущности. DbSet позволяет делать запросы и изменения.
+- `optionsBuilder.UseSqlite("Data Source=app.db");` - настраивает подключение к SQLite базе данных в файле _app.db_.
+- `modelBuilder.Entity<СУЩНОСТЬ>().HasOne(...).WithMany(...).HasForeignKey(...)` - настраивает связи между таблицами _(один-ко-многим)_.
+- `modelBuilder.Entity<СУЩНОСТЬ>().HasData(...)` - заполняет таблицы начальными данными при создании БД.
