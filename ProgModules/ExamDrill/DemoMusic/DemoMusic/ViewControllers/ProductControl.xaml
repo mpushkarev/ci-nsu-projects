@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="DemoMusic.ViewControllers.ProductControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DemoMusic.ViewControllers"
+             mc:Ignorable="d"
+             d:DesignHeight="210" d:DesignWidth="1450"
+             Background="White">
+    <Border BorderBrush="Black" 
+        BorderThickness="1"
+        Margin="5">
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"
+                                  MaxWidth="150"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="150"/>
+            </Grid.ColumnDefinitions>
+            <!--Левый компонент-->
+            <StackPanel Grid.Column="0"
+                    Margin="10 0 0 0"
+                    VerticalAlignment="Center">
+                <Image Name="BoxImage"
+                   MaxHeight="100"
+                   MaxWidth="150"
+                   HorizontalAlignment="Center"/>
+            </StackPanel>
+            <!--Центральный компонент-->
+            <StackPanel Grid.Column="1">
+                <TextBlock FontWeight="Bold">
+                    <Run Text="{Binding Type}"/>
+                    <Run Text=" | "/>
+                    <Run Text="{Binding Name}"/>
+                </TextBlock>
+                <TextBlock MaxWidth="300" HorizontalAlignment="Left"
+                           TextTrimming="CharacterEllipsis">
+                    <Run Text="Описание товара: "/>
+                    <Run Text="{Binding Desc}"/>
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="Производитель: "/>
+                    <Run Text="{Binding Manuf}"/>
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="Поставщик: "/>
+                    <Run Text="{Binding Supp}"/>
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="Цена: "/>
+                    <Run Name="BoxPrice" Text="{Binding Cost}"/>
+                    <Run Name="BoxNewPrice"/>
+                </TextBlock>
+                <TextBlock>
+                    <Run Text="Единицы измерения: "/>
+                    <Run Text="{Binding Unit}"/>
+                </TextBlock>
+                <TextBlock Name="BoxCount">
+                    <Run Text="Количество на складе: "/>
+                    <Run Text="{Binding Avail}"/>
+                </TextBlock>
+            </StackPanel>
+            <!--Правый компонент-->
+            <Grid Name="BoxDiscont" Grid.Column="2">
+                <TextBlock Text="{Binding Discount}"
+                       FontSize="30"
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Center"/>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

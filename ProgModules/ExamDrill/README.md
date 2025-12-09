@@ -1,225 +1,106 @@
-# 🔥 Спидран экзамена (и не только)
+# Короче, краткий черновик того, что нужно!
 
-> Motto: Ship it, don't perfect it 🚀
+Здесь типа краткие черновые наброски того, что может и должно пригодиться.
 
-В этом разделе собраны минимально необходимые знания и некоторые шаблоны для быстрого создания WPF-приложения с базой данных за ограниченное время. Фокус на скорость выполнения, а не на архитектурную красоту, по последней сделано много допущений и упрощений.
+## Базовая база (ЭТО БАЗА!)
 
-## ⚡ Первые 30 минут - Это База
+**Полезные материалы**
 
-### 🗂️ Создаем WPF проект + SQLite
+- [Пауль про 3НФ](https://github.com/DeedInside/SQL-3NF/blob/main/1/1.md)
+- [Пауль про импорт в БД (но это не точно)](https://github.com/DeedInside/SQL-3NF/blob/main/2/2.md)
+- [Пауль про импорт этого добра в приложение](https://github.com/DeedInside/SQL-3NF/blob/main/3/3.md)
+- [Пауль решение демки](https://github.com/DeedInside/Demo)
 
-В Visual Studio создаем новый проект `Приложение WPF (Майкрософт)`.
+**Что там с данными**
 
-![Начальный экран проекта](misc/images/wpf_first_step.jpg)
+Сначала открываем таблицы, приводим к 3НФ. Но тут есть несколько моментов:
 
-Устанавливаем `Microsoft.EntityFrameworkCore.Sqlite`, для этого открываем `Проект > Управление пакетами NuGet...`. Или, что проще, можно открыть терминал (`ПКМ на проект > Открыть в терминале`) и там выполнить:
+- С итоговыми таблицами удобно работать после импорта, чтобы скопировать тот же логин / пароль или просто какие данные примерно лежат. Для этого для удобства в таблицах можно выделять цветом столбцы PK и FK.
+- Перед переносом данных копируем содержимое таблиц только в рамках данных и вставляем в новый лист, имя которому даем с Заглавной буквы так, как будет называться таблица.
+- Абсолютно все таблицы копируем упомянутым образом на новый лист и уже там работаем (нужно, чтобы пустых строк не попалось).
+- Названия столбцов тоже пишем с Заглавной буквы (потом пойдет в БД). Если на русском, переименовываем на английский.
+- Про то, какие настройки при импорте выбирать, сказано у Пауля.
 
-```ps
-dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+**Важный момент!**
+
+При импорте вручную заходим в sql команду каждой таблицы и у Id пишем `int primary key identity(1,1)`, также меняем остальные типы данных на адекватные (в основном там пестрят ненужные float, смотрим в таблицу и по смыслу выбираем что к чему).
+
+Не меняем название таблиц на этом этапе! Часто вызывает глюки при импорте и происходит какая-то лажа. Проще поменять уже через Переименовать в готовой БД.
+
+Далее правой кнопкой по БД создаем запросы вида:
+
+```
+ALTER TABLE Orders
+ADD FOREIGN KEY (EquipmentID) REFERENCES Equipments(ID);
 ```
 
-Для базового примера возьмем абстрактную идею, где пользователю надо будет хранить примерно такие данные:
+Для каждой связи через FK.
 
-**Items:**
+После получаем диаграмму средствами MSSMS, можно ее заскринить, главное, убеждаемся, что все верно построено!
 
-| Id | Name  | Category | Notes      | Tags              |
-|----|-------|----------|------------|-------------------|
-| 1  | aboba | abobus   | haha, ohoh | lol, kek, 4eburek |
+**Импорт в приложение**
 
-**Tags:**
+Создаем приложение WPF (Майкрософт). Через NuGet ставим `Microsoft.EntityFrameworkCore.SqlServer` строго 9.0.10 версии и `Microsoft.EntityFrameworkCore.Tools` строго 9.0.10 версии, не выше, иначе все развалится.
 
-| Id | Name    |
-|----|---------|
-| 1  | lol     |
-| 2  | kek     |
-| 3  | 4eburek |
+Далее выполняем эту волшебную команду: `Scaffold-DbContext "Server=ВАШСЕРВЕР;Database=ВАШАБД; Trusted_Connection=True; TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models`. Но не где-нибудь, а в консоли диспетчера пакетов (Средства - Диспетчер пакетов - Консоль). Таким образом в папке Models появится форменное надругательство над ООП и здравым смыслом, но более мы его не трогаем. БД должна заработать, а наводить красоту некогда.
 
-**Notes:**
+## Создание приожения (просто кривые наброски полезной инфы)
 
-| Id | Text  | Item         |
-|----|-------|--------------|
-| 1  | haha  | aboba (Id 1) |
-| 2  | ohoh  | aboba (Id 1) |
+Создаем папку Windows и переносим туда MainWindow.
 
-### 📝 Модели данных (классы)
+Потом создаём окно авторизации (окно WPF), в этой папке, называем AuthWindow. Сразу же !!!! Меняем заголовок на Авторизация!!! меняем StartupUri в App.xaml (Windows\AuthWindow.xaml)!!!
 
-Создаем примерно такую структуру в проекте:
+Выпиливаем нафиг гирды и в основном юзаем StackPanel и иногда DockPanel.
 
-```tree
-ExamDrillDemo/
-├── Models/
-│   ├── Item.cs
-│   ├── Category.cs
-│   ├── Note.cs
-│   ├── Tag.cs
-│   └── ItemTag.cs
-├── Data/
-│   └── AppDbContext.cs
-├── MainWindow.xaml
-├── MainWindow.xaml.cs
+**Далее просто полезные заметки и куски кода**
+
+Для окна авторизации
+
+```
+WindowStartupLocation="CenterScreen"
+Title="Авторизация" Height="300" Width="300"
 ```
 
-В каждой модели примерно такое содержание:
+В целом везде юзаем центровку.
 
-**Item.cs**
+Экспорт данных в .bacpac вроде типа так делается: БД - Задачи - Экспорт приложения уровня данных.
 
-| Id       | Name   | CategoryId |
-|----------|--------|------------|
-| int (PK) | string | int (FK)   |
+Картинки хранить примерно тут `\Demodemo\Demodemo\bin\Debug\net8.0-windows\Images`
 
-```csharp
-public class Item {
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public int CategoryId { get; set; }
-    public Category? Category { get; set; }
-    public List<Note>? Notes { get; set; }
-    public List<ItemTag>? ItemTags { get; set; }
-}
-```
+Переопределение метода ToString для вывода `public override string ToString() => Name ?? "";` в списки. Иначе будет хрень!
 
-**Category.cs**
+Юзай `private string projPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);` в качестве костыля для получения рабочей директории.
 
-| Id       | Title  |
-|----------|--------|
-| int (PK) | string |
+По времени, наверное, надо распределить 20-30 мин на перенос БД. 1 час на формирование базовой структуры по заготовкам. Еще полтора останется чтобы разобраться.
 
-```csharp
-public class Category {
-    public int Id { get; set; }
-    public string Title { get; set; } = string.Empty;
-    public List<Item>? Items { get; set; }
-}
-```
+## Что в конечном счете от нас ждут
 
-**Note.cs**
+Как я понял, примерно это:
 
-| Id       | Text   | ItemId   |
-|----------|--------|----------|
-| int (PK) | string | int (FK) |
-
-```csharp
-public class Note {
-    public int Id { get; set; }
-    public string Text { get; set; } = string.Empty;
-    public int ItemId { get; set; }
-    public Item? Item { get; set; }
-}
-```
-
-**Tag.cs**
-
-| Id       | Name   |
-|----------|--------|
-| int (PK) | string |
-
-```csharp
-public class Tag {
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public List<ItemTag>? ItemTags { get; set; }
-}
-```
-
-**ItemTag.cs**
-
-| Id       | ItemId   | TagId    |
-|----------|----------|----------|
-| int (PK) | int (FK) | int (FK) |
-
-```csharp
-public class ItemTag {
-    public int Id { get; set; }
-    public int ItemId { get; set; }
-    public Item? Item { get; set; }
-    public int TagId { get; set; }
-    public Tag? Tag { get; set; }
-}
-```
-
-По большей части все относительно понятно, но чуть подробнее про некоторые моменты.
-
-1. Использование `nullable` для навигационных свойств, чтобы не вызывать предупреждения. Это защищает от ситуации, когда связь отсутствует.
-2. Для решения проблем с инициализацией строки юзаем `= string.Empty`. Это сахар, заменяющий инициализацию строки в конструкторе.
-3. На этом этапе пока что только просто модели данных! Не заморачиваемся с авторизацией и ролями, это позже.
-
-### 🗃️ База данных (Code First)
-
-Теперь необходимо создать БД. Открываем `AppDbContext.cs` и приводим его к примерно следующему виду:
-
-```csharp
-internal class AppDbContext : DbContext {
-
-    public DbSet<Item> Items { get; set; }
-    public DbSet<Category> Categories { get; set; }
-    public DbSet<Note> Notes { get; set; }
-    public DbSet<ItemTag> ItemTags { get; set; }
-    public DbSet<Tag> Tags { get; set; }
-
-    public AppDbContext() {
-        Database.EnsureCreated();
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-        optionsBuilder.UseSqlite("Data Source=app.db");
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder) {
-
-        modelBuilder.Entity<Item>()
-            .HasOne(i => i.Category)
-            .WithMany(c => c.Items)
-            .HasForeignKey(i => i.CategoryId);
-
-        modelBuilder.Entity<Note>()
-            .HasOne(n => n.Item)
-            .WithMany(i => i.Notes)
-            .HasForeignKey(n => n.ItemId);
-
-        modelBuilder.Entity<ItemTag>()
-            .HasKey(it => it.Id);
-
-        modelBuilder.Entity<ItemTag>()
-            .HasOne(it => it.Item)
-            .WithMany(i => i.ItemTags)
-            .HasForeignKey(it => it.ItemId);
-
-        modelBuilder.Entity<ItemTag>()
-            .HasOne(it => it.Tag)
-            .WithMany(t => t.ItemTags)
-            .HasForeignKey(it => it.TagId);
-
-        modelBuilder.Entity<Category>().HasData(
-            new Category { Id = 1, Title = "abobus" }
-        );
-
-        modelBuilder.Entity<Tag>().HasData(
-            new Tag { Id = 1, Name = "lol" },
-            new Tag { Id = 2, Name = "kek" },
-            new Tag { Id = 3, Name = "4eburek" }
-        );
-
-        modelBuilder.Entity<Item>().HasData(
-            new Item { Id = 1, Name = "aboba", CategoryId = 1 }
-        );
-
-        modelBuilder.Entity<Note>().HasData(
-            new Note { Id = 1, Text = "haha", ItemId = 1 },
-            new Note { Id = 2, Text = "ohoh", ItemId = 1 }
-        );
-
-        modelBuilder.Entity<ItemTag>().HasData(
-            new ItemTag { Id = 1, ItemId = 1, TagId = 1 },
-            new ItemTag { Id = 2, ItemId = 1, TagId = 2 },
-            new ItemTag { Id = 3, ItemId = 1, TagId = 3 }
-        );
-    }
-}
-```
-
-Немного пояснений о содержимом:
-
-- `public DbSet<СУЩНОСТЬ> СУЩНОСТИ { get; set; }` - создает таблицу в БД для каждой сущности. DbSet позволяет делать запросы и изменения.
-- `optionsBuilder.UseSqlite("Data Source=app.db");` - настраивает подключение к SQLite базе данных в файле _app.db_.
-- `modelBuilder.Entity<СУЩНОСТЬ>().HasOne(...).WithMany(...).HasForeignKey(...)` - настраивает связи между таблицами _(один-ко-многим)_.
-- `modelBuilder.Entity<СУЩНОСТЬ>().HasData(...)` - заполняет таблицы начальными данными при создании БД.
+1. База данных
+   - 3НФ
+   - ERD (из MSSMS пойдет скрин)
+   - Создана БД
+   - Таблицы + PK / FK + типы данных
+   - Импорт данных
+   - Какой-то скрипт БД
+2. Архитектура и стиль
+   - Какие-то алгоритмы
+   - Разработка согласно указаниям стиля
+   - Некоторые полезные комментарии
+   - CamelCase и все такое
+   - Авторизация, разные права юзеров
+3. Список объектов
+   - Вывод данных
+   - Фото в колонке
+   - Поиск данных
+   - Фильтры и сортировка
+4. Реализация CRUD
+   - Переходы на окно добавления и редактирования
+   - Поля для заполнения
+   - Проверка корректности данных
+   - Загрузка данных в поля при редактировании
+   - Сохранение в БД
+   - Обновление списка после изменений
+   - Удаление объекта
+5. Какой-то тестовый модуль
