@@ -1,0 +1,61 @@
+﻿<Window x:Class="SimpleCRUD.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SimpleCRUD"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="Какой-то абстрактный список" Height="450" Width="800">
+    <DockPanel>
+        <!-- Панель фильтра и поиска -->
+        <StackPanel DockPanel.Dock="Top"
+                    Orientation="Horizontal"
+                    Margin="5"
+                    Name="PanelFind">
+            <Label Content="Поиск"/>
+            <TextBox Name="FindBox"
+                     Width="100"
+                     VerticalAlignment="Center"
+                     TextChanged="FindBox_TextChanged"/>
+            <RadioButton Content="по умолчанию"
+                         GroupName="SortGroup"
+                         Checked="SortRadio_Checked"
+                         VerticalAlignment="Center"
+                         Margin="5 0 0 0"
+                         IsChecked="True"/>
+            <RadioButton Content="по возрастанию"
+                         GroupName="SortGroup"
+                         Checked="SortRadio_Checked"
+                         VerticalAlignment="Center"
+                         Margin="5 0 0 0"/>
+            <RadioButton Content="по убыванию"
+                         GroupName="SortGroup"
+                         Checked="SortRadio_Checked"
+                         VerticalAlignment="Center"
+                         Margin="5 0 0 0"/>
+        </StackPanel>
+        <!-- Нижняя панель -->
+        <StackPanel Name="CRUD"
+                    Margin="5"
+                    Orientation="Horizontal"
+                    DockPanel.Dock="Bottom">
+            <Button Content="Добавить элемент"
+                    Click="ButtonAdd_Click"
+                    Margin="0 0 5 0"
+                    Width="140"/>
+            <Button Content="Изменить элемент"
+                    Click="ButtonEdit_Click"
+                    Margin="0 0 5 0"
+                    Width="140"/>
+            <Button Content="Удалить элемент"
+                    Click="ButtonDelete_Click"
+                    Margin="0 0 5 0"
+                    Width="140"/>
+        </StackPanel>
+        <!-- Список элементов -->
+        <ListBox Name="ListItems"
+                 Margin="5 0 5 0"
+                 HorizontalContentAlignment="Stretch"/>
+    </DockPanel>
+</Window>
