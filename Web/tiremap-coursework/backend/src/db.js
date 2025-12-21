@@ -6,7 +6,7 @@ const CREATE_POINTS_TABLE = `
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     description TEXT NOT NULL,
     address TEXT,
-    status TEXT DEFAULT 'new',
+    status TEXT CHECK(status IN ('pending', 'queued', 'in_progress', 'completed', 'deleted')) DEFAULT 'pending',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`;
 
@@ -15,7 +15,7 @@ const CREATE_POINTS_TABLE = `
 export async function initDb() {
   const db = await open({
     filename: './database.db',
-    driver: sqlite3.Database
+    driver: sqlite3.Database,
   });
 
   await db.run(CREATE_POINTS_TABLE);

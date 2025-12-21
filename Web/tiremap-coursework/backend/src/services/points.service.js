@@ -5,7 +5,7 @@ function validatePoint(data) {
 }
 
 export async function getAllPoints(db) {
-  return await repo.getAllPoints(db);
+  return await repo.getAllPointsWithoutPendingAndDeleted(db);
 }
 
 export async function getPointById(db, id) {
