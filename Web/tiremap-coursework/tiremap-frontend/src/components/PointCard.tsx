@@ -62,9 +62,9 @@ export function PointCard({ onClick, ...point }: PointCardProps) {
           <div className="flex items-center gap-1">
             <MdCalendarToday className="text-lg text-gray-600" />
             <span className="text-gray-500">
-              {new Date(point.date)
+              {new Date(`${point.createdAt.replace(' ', 'T')}Z`)
                 .toLocaleString('ru-RU', {
-                  timeZone: 'Asia/Krasnoyarsk',
+                  timeZone: 'Asia/Novosibirsk',
                   day: '2-digit',
                   month: '2-digit',
                   year: 'numeric',

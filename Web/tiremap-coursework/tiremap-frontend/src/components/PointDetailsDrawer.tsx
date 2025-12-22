@@ -107,15 +107,14 @@ export function PointDetailsDrawer({
               <h4 className="font-medium text-gray-900">Дата создания:</h4>
             </div>
             <p className="text-gray-600 pl-6">
-              {new Date(point.date)
+              {new Date(`${point.createdAt.replace(' ', 'T')}Z`)
                 .toLocaleString('ru-RU', {
-                  timeZone: 'Asia/Krasnoyarsk',
+                  timeZone: 'Asia/Novosibirsk',
                   day: '2-digit',
                   month: '2-digit',
                   year: 'numeric',
                   hour: '2-digit',
                   minute: '2-digit',
-                  weekday: 'long',
                 })
                 .replace(',', '')}
             </p>

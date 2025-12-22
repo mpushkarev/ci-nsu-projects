@@ -4,18 +4,31 @@ function validatePoint(data) {
   // Basic validation for point data
 }
 
+// Функция для преобразования snake_case в camelCase
+function transformPointForApi(dbPoint) {
+  return {
+    id: dbPoint.id,
+    description: dbPoint.description,
+    address: dbPoint.address,
+    status: dbPoint.status,
+    createdAt: dbPoint.created_at,
+  };
+}
+
 export async function getAllPoints(db) {
-  return await repo.getAllPointsWithoutPendingAndDeleted(db);
+  const dbPoints = await repo.getAllPointsWithoutDeleted(db);
+  return dbPoints.map(transformPointForApi);
 }
 
 export async function getPointById(db, id) {
-  return await repo.getPointById(db, id);
+  const dbPoint = await repo.getPointById(db, id);
+  return transformPointForApi(dbPoint);
 }
 
 export async function createPoint(db, data) {
   const result = await repo.createPoint(db, data);
   const newPoint = await repo.getPointById(db, result.lastID);
-  return newPoint;
+  return transformPointForApi(newPoint);
 }
 
 export async function updatePoint(db, id, data) {

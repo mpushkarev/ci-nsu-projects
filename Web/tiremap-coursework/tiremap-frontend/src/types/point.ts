@@ -2,7 +2,7 @@ export interface Point {
   id: string;
   address: string;
   description: string;
-  date: string;
+  createdAt: string;
   status: 'pending' | 'queued' | 'in_progress' | 'completed' | 'deleted';
 }
 
