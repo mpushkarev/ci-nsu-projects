@@ -12,14 +12,18 @@ import {
 } from '@/components/ui/drawer';
 import type { Point, FilterStatus } from '@/types/point';
 import { Badge } from './ui/badge';
-import { Textarea } from './ui/textarea';
 
 interface PointsListProps {
   points: Point[];
   defaultFilter?: FilterStatus;
+  isAdmin?: boolean;
 }
 
-export function PointsList({ points, defaultFilter = 'all' }: PointsListProps) {
+export function PointsList({
+  points,
+  defaultFilter = 'all',
+  isAdmin = false,
+}: PointsListProps) {
   const [filterStatus, setFilterStatus] = useState<FilterStatus>(defaultFilter);
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -50,13 +54,12 @@ export function PointsList({ points, defaultFilter = 'all' }: PointsListProps) {
     queued: 'В очереди',
     in_progress: 'В работе',
     completed: 'Выполнено',
-    deleted: 'Удалено',
   };
 
   return (
     <div className="w-full space-y-4">
       {/* Панель управления */}
-      <div className="flex flex-col w-full max-w-3xl ml-auto mr-auto gap-4 p-4 bg-gray-50 rounded-lg">
+      <div className="flex flex-col w-full max-w-3xl ml-auto mr-auto gap-4 p-4 bg-white border border-gray-200 rounded-lg">
         <div className="flex flex-col space-y-2">
           <span className="text-sm font-medium text-gray-700">
             Фильтр по статусу:
@@ -113,8 +116,8 @@ export function PointsList({ points, defaultFilter = 'all' }: PointsListProps) {
               <>
                 <div className="space-y-2">
                   <h4 className="font-medium text-gray-900">Описание:</h4>
-                  {/* <p className="text-gray-700">{selectedPoint.description}</p> */}
-                  <Textarea
+                  <p className="text-gray-700">{selectedPoint.description}</p>
+                  {/* <Textarea
                     placeholder="Более точная информация"
                     value={selectedPoint?.description || ''}
                     onChange={(e) => {
@@ -125,7 +128,7 @@ export function PointsList({ points, defaultFilter = 'all' }: PointsListProps) {
                         });
                       }
                     }}
-                  />
+                  /> */}
                 </div>
 
                 <div className="space-y-2">
@@ -158,7 +161,7 @@ export function PointsList({ points, defaultFilter = 'all' }: PointsListProps) {
                           ? 'bg-yellow-400 text-neutral-900'
                           : selectedPoint.status === 'completed'
                           ? 'bg-green-600'
-                          : 'border-red-500 text-red-500'
+                          : 'bg-gray-400'
                       } rounded-md`}
                     >
                       {selectedPoint.status === 'pending'
@@ -169,7 +172,7 @@ export function PointsList({ points, defaultFilter = 'all' }: PointsListProps) {
                         ? 'в работе'
                         : selectedPoint.status === 'completed'
                         ? 'выполнено'
-                        : 'удалено'}
+                        : 'неизвестно'}
                     </Badge>
                   </div>
                 </div>
@@ -178,11 +181,29 @@ export function PointsList({ points, defaultFilter = 'all' }: PointsListProps) {
           </div>
 
           <DrawerFooter>
-            <DrawerClose asChild>
-              <Button variant="outline" onClick={handleDrawerClose}>
-                Закрыть
-              </Button>
-            </DrawerClose>
+            <div className="flex flex-col gap-2 w-full">
+              {isAdmin && (
+                <Button
+                  variant="default"
+                  className="w-full"
+                  onClick={() => {
+                    // Логика редактирования точки
+                    alert('Редактирование точки: ' + selectedPoint?.id);
+                  }}
+                >
+                  Редактировать
+                </Button>
+              )}
+              <DrawerClose asChild>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleDrawerClose}
+                >
+                  Закрыть
+                </Button>
+              </DrawerClose>
+            </div>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

@@ -6,4 +6,4 @@ export interface Point {
   status: 'pending' | 'queued' | 'in_progress' | 'completed' | 'deleted';
 }
 
-export type FilterStatus = Point['status'] | 'all';
+export type FilterStatus = Exclude<Point['status'], 'deleted'> | 'all';
