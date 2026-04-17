@@ -6,3 +6,6 @@
 - [05_CinemaMultiplex](./05_CinemaMultiplex/README.md)
 - [06_LibraryManagement](./06_LibraryManagement/README.md)
 - [07_SqlLabs](./07_SqlLabs/README.md)
+- [08_PhoneRepairMaster](./08_PhoneRepairMaster/README.md)
+- [09_RealEstateAgency](./09_RealEstateAgency/README.md)
+- [10_FurnitureFactory](./10_FurnitureFactory/README.md)
