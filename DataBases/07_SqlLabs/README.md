@@ -1,0 +1,9 @@
+# 06_SqlLabs
+- [Lab_01_Intro](./Lab_01_Intro/README.md)
+- [Lab_02_DDL](./Lab_02_DDL/README.md)
+- [Lab_03_DML](./Lab_03_DML/README.md)
+- [Lab_04_DataTypes](./Lab_04_DataTypes/README.md)
+- [Lab_05_SelectBasics](./Lab_05_SelectBasics/README.md)
+- [Lab_06_Joins](./Lab_06_Joins/README.md)
+- [Lab_07_Filtering](./Lab_07_Filtering/)
+- [Lab_08_Aggregates](./Lab_08_Aggregates/README.md)
