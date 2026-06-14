@@ -1,6 +1,7 @@
 # general
 .vs
 *.db
+.DS_Store
 
 # csharp
 bin
